@@ -1,0 +1,65 @@
+<html><head><title>xml converter</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <style>
+        body {
+            background-color: #777;
+            color: #eee;
+            font-family: monospace;
+        }
+        a {
+            color: #eee;
+        }
+textarea {
+    width: 100%;
+    font-size: 18px;
+}
+
+    </style>
+    
+<!--    <script src="http://aa.localhost/js/jquery.min.js"></script> -->
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    
+</head>
+<body>
+    <h3>input xml</h3>
+    <textarea id="a1" rows="8"></textarea><br/><br/>
+
+    <h3>minimal:  \s* \/</h3>
+    <textarea id="a2" rows="8" readonly></textarea><br/>
+
+    <h3 style="color:blue">mask structure only</h3>
+    <textarea id="a3" rows="8" readonly></textarea><br/>
+
+    <h3>max mask</h3>
+    <textarea id="a4" rows="8" readonly></textarea><br/>
+
+
+<script>
+$(document).ready(function() {
+    $('#a1').on('change', function(e) {
+        let data = $('#a1').val();
+        // console.log(data);
+        data = data.replace(/<\?xml.*?>/, '').trim();
+        data = data.replaceAll('><', '>\\s*<');
+        $('#a2').val(data.replaceAll('\/', '\\/'));
+
+        let data3 = data.replace(/<(\w+)>([^<]*?)<\/\1>/ug, '<$1>(.*?)<\/$1>');
+        $('#a3').val(data3.replaceAll('\/', '\\/'));
+
+        // max mask
+        data = data.replace(/<(\w+)>([^<]*?)<\/\1>/ug, '<$1>=$2=<\/$1>');
+        
+        data = data.replace(/>=(\d+)=</ug, '>(\\d+)<');
+        data = data.replace(/>=([\d\.]+)=</ug, '>([\\d\\.]+)<');
+        data = data.replace(/>=(\w+)=</ug, '>(\\w+)<');
+        data = data.replace(/>=([а-яА-Я]+)=</ug, '>([а-яА-Я]+)<');
+        data = data.replace(/>=(.*?)=</ug, '>(.*?)<');
+        $('#a4').val(data.replaceAll('\/', '\\/'));
+    });
+});
+</script>
+
+</body>
+</html>
